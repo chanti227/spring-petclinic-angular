@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spring-petclinic-angular-deployment
+  name: spring-petclinic-angular
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: spring-petclinic-angular
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic-angular
+    spec:
+      containers:
+      - name: my-spring-petclinic-angular
+        image: public.ecr.aws/n8u2g7a5/my-first-repo
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8085
+          name: http
+          protocol: TCP
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spring-petclinic-angular
+    k8s-app: spring-petclinic-angular
+  name: spring-petclinic-angular
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8085
+  type: LoadBalancer
+  selector:
+    app: spring-petclinic-angular
